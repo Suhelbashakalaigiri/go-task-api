@@ -55,5 +55,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([
+                    file(
+                        credentialsId: 'kubeconfig-docker-desktop',
+                        variable: 'KUBECONFIG'
+                    )
+                ]) {
+                    bat '''
+                        kubectl config current-context
+                        kubectl get nodes
+
+                        kubectl set image deployment/go-task-api go-task-api=suhelbasha7324/go-task-api:%BUILD_NUMBER%
+
+                        kubectl rollout status deployment/go-task-api
+                    '''
+                }
+            }
+        }
     }
 }
