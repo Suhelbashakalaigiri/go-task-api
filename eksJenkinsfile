@@ -61,7 +61,17 @@ pipeline {
                 }
             }
         }
-
+        stage('Check AWS CLI') {
+            steps {
+                   bat '''
+                       whoami
+                       where aws
+                       aws --version
+                       where kubectl
+                       kubectl version --client
+                  '''
+              }
+       }
         stage('Deploy to EKS') {
             steps {
                 withCredentials([
